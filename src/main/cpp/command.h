@@ -39,7 +39,7 @@ class command :
     public robotkernel::module_base
 {
     private:
-        std::string command;
+        std::string cmd;
 
     public:
         //! yaml config construction

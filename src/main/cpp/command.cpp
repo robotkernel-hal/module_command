@@ -44,9 +44,9 @@ using namespace string_util;
  * \param node yaml node
  */
 command::command(const char* name, const YAML::Node& node) 
-    : module_base("module_command", name, node),
+    : module_base("module_command", name, node)
 {
-    command = get_as<string>(node, "command", string(""));
+    cmd = get_as<string>(node, "command", string(""));
 }
 
 //! default destruction
@@ -54,11 +54,11 @@ command::~command() {
 }
 
 void command::tick() {
+    log(info, "execute command: %s\n", cmd.c_str());
+    system(cmd.c_str());
 }
 
 int command::set_state(module_state_t state) {
-    kernel& k = *kernel::get_instance();
-
     // get transition
     uint32_t transition = GEN_STATE(this->state, state);
     
