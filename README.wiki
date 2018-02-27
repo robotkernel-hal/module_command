@@ -2,15 +2,15 @@ This module executes a command on a received trigger pulse.
 
 = Configuration = 
 
-- name: my_command
-  so_file: libmodule_command.so
-  config:
-    command: /path/to/stop_trace
-  trigger:
-  - dev_name: jitter.new_maxever.trigger
-    direct_mode: true
-  power_up: op
-  depends: timer
+ - name: my_command
+   so_file: libmodule_command.so
+   config:
+     command: /path/to/stop_trace
+   trigger:
+   - dev_name: jitter.new_maxever.trigger
+     direct_mode: true
+   power_up: op
+   depends: timer
 
 ; command
 : This specifies which command to execute. In our example this will stop the currently running trace process
