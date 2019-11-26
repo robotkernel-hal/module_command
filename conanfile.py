@@ -4,6 +4,7 @@ import re
 class MainProject(ConanFile):
     name = "module_command"
     license = "GPLv3"
+    author = "Robert Burger <robert.burger@dlr.de>"
     url = f"https://rmc-github.robotic.dlr.de/robotkernel/{name}"
     description = "robotkernel-5 is a modular, easy configurable hardware abstraction framework"
     settings = "os", "compiler", "build_type", "arch"
