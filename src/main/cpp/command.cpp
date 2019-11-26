@@ -55,7 +55,12 @@ command::~command() {
 
 void command::tick() {
     log(info, "execute command: %s\n", cmd.c_str());
-    system(cmd.c_str());
+
+    pid_t ret = fork();
+    if (ret == 0) {
+        system(cmd.c_str());
+        exit(0);
+    }
 }
 
 int command::set_state(module_state_t state) {
