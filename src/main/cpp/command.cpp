@@ -46,6 +46,7 @@ using namespace string_util;
 command::command(const char* name, const YAML::Node& node) 
     : module_base("module_command", name, node)
 {
+    exec_on_switch_to_op = get_as<bool>(node, "exec_on_switch_to_op", false);
     cmd = get_as<string>(node, "command", string(""));
 }
 
@@ -112,6 +113,10 @@ int command::set_state(module_state_t state) {
                 break;
         case safeop_2_op:
             // ====> start sending commands
+            if (exec_on_switch_to_op) {
+                log(info, "execute command: %s\n", cmd.c_str());
+                system(cmd.c_str());
+            }
             break;
         case op_2_op:
         case safeop_2_safeop:

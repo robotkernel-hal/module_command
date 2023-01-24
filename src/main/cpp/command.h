@@ -39,6 +39,7 @@ class command :
     public robotkernel::module_base
 {
     private:
+        bool exec_on_switch_to_op;
         std::string cmd;
 
     public:
