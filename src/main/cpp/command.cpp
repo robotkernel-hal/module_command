@@ -54,7 +54,7 @@ command::command(const char* name, const YAML::Node& node)
     cmd = get_as<string>(node, "command", string(""));
     stop_trace = get_as<bool>(node, "stop_trace", false);
     if (cmd == "stop-trace")
-	    stop_trace = true;
+        stop_trace = true;
 
 }
 
@@ -64,27 +64,27 @@ command::~command() {
 
 void command::tick() {
     if (stop_trace) {
-	    log(info, "stopping trace...\n");
-	    int fd = open("/sys/kernel/debug/tracing/tracing_on", O_WRONLY);
-	    if (fd == -1)
-		    log(error, "could not open tracing_on-file: %d %s\n", errno, strerror(errno));
-	    else {
-		    std::string data = "0\n";
-		    ssize_t ret = write(fd, data.c_str(), data.size());
-		    if (ret != (signed)data.size())
-			    log(error, "could not write to tracing_on-file: ret %d, %d %s\n", (int)ret, errno, strerror(errno));
-		    close(fd);
-	    }
+        log(info, "stopping trace...\n");
+        int fd = open("/sys/kernel/debug/tracing/tracing_on", O_WRONLY);
+        if (fd == -1)
+            log(error, "could not open tracing_on-file: %d %s\n", errno, strerror(errno));
+        else {
+            std::string data = "0\n";
+            ssize_t ret = write(fd, data.c_str(), data.size());
+            if (ret != (signed)data.size())
+                log(error, "could not write to tracing_on-file: ret %d, %d %s\n", (int)ret, errno, strerror(errno));
+            close(fd);
+        }
     }
 
     if (cmd != "stop-trace") {
-	    log(info, "execute command: %s\n", cmd.c_str());
+        log(info, "execute command: %s\n", cmd.c_str());
 
-	    pid_t ret = fork();
-	    if (ret == 0) {
-		    system(cmd.c_str());
-		    exit(0);
-	    }
+        pid_t ret = fork();
+        if (ret == 0) {
+            system(cmd.c_str());
+            exit(0);
+        }
     }
 }
 
