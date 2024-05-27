@@ -23,9 +23,13 @@
 #include "command.h"
 #include "robotkernel/helpers.h"
 
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "yaml-cpp/yaml.h"
 #include <string_util/string_util.h>
@@ -48,6 +52,10 @@ command::command(const char* name, const YAML::Node& node)
 {
     exec_on_switch_to_op = get_as<bool>(node, "exec_on_switch_to_op", false);
     cmd = get_as<string>(node, "command", string(""));
+    stop_trace = get_as<bool>(node, "stop_trace", false);
+    if (cmd == "stop-trace")
+	    stop_trace = true;
+
 }
 
 //! default destruction
@@ -55,12 +63,28 @@ command::~command() {
 }
 
 void command::tick() {
-    log(info, "execute command: %s\n", cmd.c_str());
+    if (stop_trace) {
+	    log(info, "stopping trace...\n");
+	    int fd = open("/sys/kernel/debug/tracing/tracing_on", O_WRONLY);
+	    if (fd == -1)
+		    log(error, "could not open tracing_on-file: %d %s\n", errno, strerror(errno));
+	    else {
+		    std::string data = "0\n";
+		    ssize_t ret = write(fd, data.c_str(), data.size());
+		    if (ret != (signed)data.size())
+			    log(error, "could not write to tracing_on-file: ret %d, %d %s\n", (int)ret, errno, strerror(errno));
+		    close(fd);
+	    }
+    }
 
-    pid_t ret = fork();
-    if (ret == 0) {
-        system(cmd.c_str());
-        exit(0);
+    if (cmd != "stop-trace") {
+	    log(info, "execute command: %s\n", cmd.c_str());
+
+	    pid_t ret = fork();
+	    if (ret == 0) {
+		    system(cmd.c_str());
+		    exit(0);
+	    }
     }
 }
 

@@ -5,7 +5,8 @@ This module executes a command on a received trigger pulse.
  - name: my_command
    so_file: libmodule_command.so
    config:
-     command: /path/to/stop_trace
+     command: /path/to/stop_trace.sh
+     [stop_trace: false ]
    trigger:
    - dev_name: jitter.new_maxever.trigger
      direct_mode: true
@@ -13,7 +14,10 @@ This module executes a command on a received trigger pulse.
    depends: timer
 
 ; command
-: This specifies which command to execute. In our example this will stop the currently running trace process
+: This specifies which command to execute. In our example this will stop the currently running trace process. (if set to special value `stop-trace` no command will be executed, only tracing is stopped, see below)
+
+; stop_trace
+: When set to true `0\n` will be written to `/sys/kernel/debug/tracing/tracing_on` before executing a shell command.
 
 The module needs to be attached to a trigger device. 
 
