@@ -41,6 +41,7 @@ class command :
     private:
         bool exec_on_switch_to_op;
         std::string cmd;
+	bool stop_trace;
 
     public:
         //! yaml config construction
