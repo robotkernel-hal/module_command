@@ -23,6 +23,8 @@
 #ifndef __MODULE_COMMAND_H__
 #define __MODULE_COMMAND_H__
 
+#include <sys/types.h>
+
 #include "robotkernel/runnable.h"
 #include "robotkernel/module_base.h"
 
@@ -42,6 +44,9 @@ class command :
         bool exec_on_switch_to_op;
         std::string cmd;
 	bool stop_trace;
+	bool allow_concurrent_executions;
+
+	pid_t running_command;
 
     public:
         //! yaml config construction

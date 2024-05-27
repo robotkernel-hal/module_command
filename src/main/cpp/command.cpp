@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -55,7 +56,9 @@ command::command(const char* name, const YAML::Node& node)
     stop_trace = get_as<bool>(node, "stop_trace", false);
     if (cmd == "stop-trace")
         stop_trace = true;
+    allow_concurrent_executions = get_as<bool>(node, "allow_concurrent_executions", false);
 
+    running_command = -1;
 }
 
 //! default destruction
@@ -78,13 +81,28 @@ void command::tick() {
     }
 
     if (cmd != "stop-trace") {
+        if (!allow_concurrent_executions && running_command != -1) {
+            int status;
+            pid_t ret = waitpid(running_command, &status, WNOHANG);
+            if (ret != running_command) {
+                log(info, "last command still running. ignoring trigger!\n");
+                return;
+            }
+            running_command = -1;
+        }
+
         log(info, "execute command: %s\n", cmd.c_str());
 
         pid_t ret = fork();
+        if (ret == -1) {
+            log(error, "failed to execute command: fork(): %d %s\n", errno, strerror(errno));
+            return;
+        }
         if (ret == 0) {
             system(cmd.c_str());
             exit(0);
         }
+        running_command = ret;
     }
 }
 
