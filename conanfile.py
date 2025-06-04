@@ -5,7 +5,7 @@ class MainProject(ConanFile):
     python_requires_extend = "conan_template.RobotkernelConanFile"
 
     name = "module_command"
-    description = "robotkernel-5 module to execute commands on trigger input."
+    description = "robotkernel module to execute commands on trigger input."
     exports_sources = ["*", "!.gitignore"]
-    requires = "robotkernel/[~=5]@robotkernel/stable"
+    requires = "robotkernel/[~6]@robotkernel/unstable"
 
