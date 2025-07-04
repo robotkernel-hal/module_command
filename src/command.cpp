@@ -106,70 +106,11 @@ void command::tick() {
     }
 }
 
-int command::set_state(module_state_t state) {
-    // get transition
-    uint32_t transition = GEN_STATE(this->state, state);
-    
-    log(info, "state %s requested\n", state_to_string(state));
-
-    switch (transition) {
-        case op_2_safeop:
-        case op_2_preop:
-        case op_2_init:
-        case op_2_boot:
-            // ====> stop sending commands
-            if (state == module_state_safeop)
-                break;
-        case safeop_2_preop:
-        case safeop_2_init:
-        case safeop_2_boot:
-            // ====> stop receiving measurements
-            if (state == module_state_preop)
-                break;
-        case preop_2_init:
-        case preop_2_boot:
-            // ====> deinit devices
-        case init_2_init:
-            // ====> re-/open device
-            if (state == module_state_init)
-                break;
-        case init_2_boot:
-            break;
-        case boot_2_init:
-        case boot_2_preop:
-        case boot_2_safeop:
-        case boot_2_op:
-            // ====> re-/open device
-            if (state == module_state_init)
-                break;
-        case init_2_op:
-        case init_2_safeop:
-        case init_2_preop:
-            // ====> initial devices            
-            if (state == module_state_preop)
-                break;
-        case preop_2_op:
-        case preop_2_safeop:
-            // ====> start receiving measurements
-            if (state == module_state_safeop)
-                break;
-        case safeop_2_op:
-            // ====> start sending commands
-            if (exec_on_switch_to_op) {
-                log(info, "execute command: %s\n", cmd.c_str());
-                system(cmd.c_str());
-            }
-            break;
-        case op_2_op:
-        case safeop_2_safeop:
-        case preop_2_preop:
-            // ====> do nothing
-            break;
-
-        default:
-            break;
+//! State transition from PREOP to SAFEOP
+void command::set_state_safeop_2_op() {
+    if (exec_on_switch_to_op) {
+        log(info, "execute command: %s\n", cmd.c_str());
+        system(cmd.c_str());
     }
-
-    return (this->state = state);
 }
 

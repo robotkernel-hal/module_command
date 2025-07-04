@@ -20,8 +20,8 @@
  * along with robotkernel.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __MODULE_COMMAND_H__
-#define __MODULE_COMMAND_H__
+#ifndef MODULE_COMMAND__COMMAND_H
+#define MODULE_COMMAND__COMMAND_H
 
 #include <sys/types.h>
 
@@ -32,9 +32,6 @@
 #include "config.h"
 
 namespace module_command {
-#ifdef EMACS
-}
-#endif
 
 class command :
     public std::enable_shared_from_this<command>,
@@ -59,25 +56,18 @@ class command :
         //! default destruction
         ~command();
 
-        //! set module state
-        /*
-         * \param state module state to set
-         * \return 0 on success
-         */
-        int set_state(module_state_t state);
+        //! State transition from PREOP to SAFEOP
+        virtual void set_state_safeop_2_op() override;
 
         //! module trigger callback
         /*! does one measurement
          *
          * if log buffer is full, output thread is triggered
          */
-        void tick();
+        virtual void tick() override;
 };
 
-#ifdef EMACS
-{
-#endif
 };
 
-#endif // __MODULE_COMMAND_H__
+#endif // MODULE_COMMAND__COMMAND_H
 
