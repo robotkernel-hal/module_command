@@ -26,24 +26,31 @@
 #include <sys/types.h>
 
 #include "robotkernel/runnable.h"
+#include "robotkernel/trigger_base.h"
 #include "robotkernel/module_base.h"
 
 #include "yaml-cpp/yaml.h"
 #include "config.h"
 
+using namespace robotkernel;
+
 namespace module_command {
 
 class command :
     public std::enable_shared_from_this<command>,
-    public robotkernel::module_base
+    public trigger_base,
+    public module_base
 {
     private:
         bool exec_on_switch_to_op;
         std::string cmd;
-	bool stop_trace;
-	bool allow_concurrent_executions;
+        bool stop_trace;
+        bool allow_concurrent_executions;
 
-	pid_t running_command;
+        std::string trigger_dev_name;
+        std::shared_ptr<trigger> trigger_dev;
+
+        pid_t running_command;
 
     public:
         //! yaml config construction
@@ -55,6 +62,12 @@ class command :
 
         //! default destruction
         ~command();
+        
+        //! State transition from SAFEOP to PREOP
+        virtual void set_state_safeop_2_preop() override;
+
+        //! State transition from PREOP to SAFEOP
+        virtual void set_state_preop_2_safeop() override;
 
         //! State transition from PREOP to SAFEOP
         virtual void set_state_safeop_2_op() override;

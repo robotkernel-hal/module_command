@@ -33,7 +33,6 @@
 #include <fcntl.h>
 
 #include "yaml-cpp/yaml.h"
-#include <string_util/string_util.h>
 
 MODULE_DEF(module_command, module_command::command)
 
@@ -41,16 +40,18 @@ using namespace std;
 using namespace std::placeholders;
 using namespace robotkernel;
 using namespace module_command;
-using namespace string_util;
         
 //! yaml config construction
 /*!
  * \param name name of jm
  * \param node yaml node
  */
-command::command(const char* name, const YAML::Node& node) 
-    : module_base("module_command", name, node)
+command::command(const char* name, const YAML::Node& node) :
+    module_base("module_command", name, node),
+    trigger_base(node["trigger"] ? node["trigger"] : YAML::Node())
 {
+    trigger_dev_name = get_as<string>(node, "trigger_dev");
+
     exec_on_switch_to_op = get_as<bool>(node, "exec_on_switch_to_op", false);
     cmd = get_as<string>(node, "command", string(""));
     stop_trace = get_as<bool>(node, "stop_trace", false);
@@ -104,6 +105,19 @@ void command::tick() {
         }
         running_command = ret;
     }
+}
+       
+
+//! State transition from SAFEOP to PREOP
+void command::set_state_safeop_2_preop() {
+    trigger_dev->remove_trigger(static_pointer_cast<trigger_base>(shared_from_this()));
+    trigger_dev = nullptr;
+}
+
+//! State transition from PREOP to SAFEOP
+void command::set_state_preop_2_safeop() {
+    trigger_dev = get_device<trigger>(trigger_dev_name);
+    trigger_dev->add_trigger(static_pointer_cast<trigger_base>(shared_from_this()));
 }
 
 //! State transition from PREOP to SAFEOP
