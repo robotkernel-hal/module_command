@@ -1,11 +1,14 @@
 from conan import ConanFile
 
 class MainProject(ConanFile):
-    python_requires = "conan_template/[~=5]@robotkernel/stable"
+    python_requires = "conan_template/[~5]@robotkernel/stable"
     python_requires_extend = "conan_template.RobotkernelConanFile"
 
     name = "module_command"
     description = "robotkernel module to execute commands on trigger input."
     exports_sources = ["*", "!.gitignore"]
     requires = "robotkernel/[~6]@robotkernel/unstable"
+
+    def source(self):
+        self.run(f"sed 's/AC_INIT(.*/AC_INIT([{self.name}], [{self.version}], [{self.author}])/' configure.ac.in > configure.ac")
 
