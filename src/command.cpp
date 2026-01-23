@@ -39,6 +39,7 @@ MODULE_DEF(module_command, module_command::command)
 using namespace std;
 using namespace std::placeholders;
 using namespace robotkernel;
+using namespace robotkernel::helpers;
 using namespace module_command;
         
 //! yaml config construction
@@ -47,8 +48,8 @@ using namespace module_command;
  * \param node yaml node
  */
 command::command(const char* name, const YAML::Node& node) :
-    module_base("module_command", name, node),
-    trigger_base(node["trigger"] ? node["trigger"] : YAML::Node())
+    trigger_base(node["trigger"] ? node["trigger"] : YAML::Node()),
+    module_base("module_command", name, node)
 {
     trigger_dev_name = get_as<string>(node, "trigger_dev");
 
@@ -110,14 +111,14 @@ void command::tick() {
 
 //! State transition from SAFEOP to PREOP
 void command::set_state_safeop_2_preop() {
-    trigger_dev->remove_trigger(static_pointer_cast<trigger_base>(shared_from_this()));
+    trigger_dev->remove_trigger(shared_from_this_as<trigger_base>());
     trigger_dev = nullptr;
 }
 
 //! State transition from PREOP to SAFEOP
 void command::set_state_preop_2_safeop() {
     trigger_dev = get_device<trigger>(trigger_dev_name);
-    trigger_dev->add_trigger(static_pointer_cast<trigger_base>(shared_from_this()));
+    trigger_dev->add_trigger(shared_from_this_as<trigger_base>());
 }
 
 //! State transition from PREOP to SAFEOP

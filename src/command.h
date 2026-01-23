@@ -32,14 +32,12 @@
 #include "yaml-cpp/yaml.h"
 #include "config.h"
 
-using namespace robotkernel;
-
 namespace module_command {
 
 class command :
-    public std::enable_shared_from_this<command>,
-    public trigger_base,
-    public module_base
+    public virtual robotkernel::shared_base,
+    public robotkernel::trigger_base,
+    public robotkernel::module_base
 {
     private:
         bool exec_on_switch_to_op;
@@ -48,7 +46,7 @@ class command :
         bool allow_concurrent_executions;
 
         std::string trigger_dev_name;
-        std::shared_ptr<trigger> trigger_dev;
+        std::shared_ptr<robotkernel::trigger> trigger_dev;
 
         pid_t running_command;
 
