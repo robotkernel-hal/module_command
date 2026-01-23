@@ -1,0 +1,78 @@
+module-command (6.0.0) unstable; urgency=low
+
+
+ -- Schmidt, Florian ( RM-AF ) <Florian.Schmidt@dlr.de>  Mon, 27 May 2024 14:57:18 +0200
+
+module-command (5.1.0) unstable; urgency=low
+
+  * new optional config: `allow_concurrent_executions: true` (#3)
+  * Merge pull request #2 from robotkernel/feat/stop-trace
+  * cleanup whitespace
+  * new optional config: `stop_trace: true`
+
+ -- Schmidt, Florian ( RM-AF ) <Florian.Schmidt@dlr.de>  Mon, 27 May 2024 14:57:18 +0200
+
+module-command (5.0.4) unstable; urgency=low
+
+  * Merge pull request #1 from robotkernel/fix/conan2_template
+  * chore(rmc build): use build profile
+  * fix: update python_requires syntax
+
+ -- Burger, Robert <robert.burger@dlr.de>  Tue, 21 Nov 2023 11:20:27 +0100
+
+module-command (5.0.3) unstable; urgency=low
+
+  * add: execute on switch to op
+  * switched to conan template
+  * switching to defaults
+
+ -- Robert Burger <robert.burger@dlr.de>  Tue, 24 Jan 2023 12:57:25 +0100
+
+module-command (5.0.2) unstable; urgency=low
+
+  * doing command in fork now
+  * added author
+
+ -- Robert Burger <robert.burger@dlr.de>  Tue, 26 Nov 2019 06:43:41 +0100
+
+module-command (5.0.1) unstable; urgency=low
+
+  * changed build targets
+  * Merge branch 'release/5.0.1'
+  * added architectures
+  * added architectures
+  * added architectures
+  * added architectures
+  * fixed jenkinsfile
+  * fixed jenkinsfile
+  * added architectures
+  * added architectures
+  * build: updated build/ci files for cissy 1.0->2.0
+  * build: updated build/ci files for cissy 1.0->2.0
+  * build: updated build/ci files for cissy 1.0->2.0
+  * removed share folder
+  * updated conan file to new version
+  * removed generating of ln include file
+  * removed install rule for share folder
+  * added LICENSE file
+  * updated jenkins file
+  * fixed requirements
+  * added missing m4 macro
+  * updated pkg config check
+  * updated requiers
+  * added conan/jenkins stuff
+
+ -- Robert Burger <robert.burger@dlr.de>  Fri, 25 Oct 2019 12:18:54 +0200
+
+module-command (5.0.0) unstable; urgency=low
+
+  * prep 5.0.0. release
+  * fixed code box
+  * added README.wiki
+  * auto commit
+  * added command, seems to work
+  * initial commit
+  * Initial commit
+
+ -- Robert Burger <robert.burger@dlr.de>  Tue, 13 Mar 2018 08:55:18 +0100
+
