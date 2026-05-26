@@ -1,4 +1,4 @@
-module-command (6.0.0) unstable; urgency=low
+module-command (6.0.0) stable; urgency=low
 
 
  -- Schmidt, Florian ( RM-AF ) <Florian.Schmidt@dlr.de>  Mon, 27 May 2024 14:57:18 +0200
