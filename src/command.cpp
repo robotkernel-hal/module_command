@@ -69,15 +69,15 @@ command::~command() {
 
 void command::tick() {
     if (stop_trace) {
-        log(info, "stopping trace...\n");
+        log(info, "event=stop_trace\n");
         int fd = open("/sys/kernel/debug/tracing/tracing_on", O_WRONLY);
         if (fd == -1)
-            log(error, "could not open tracing_on-file: %d %s\n", errno, strerror(errno));
+            log(error, "event=stop_trace tracing_file=/sys/kernel/debug/tracing/tracing_on errno=%d message=\"%s\"\n", errno, strerror(errno));
         else {
             std::string data = "0\n";
             ssize_t ret = write(fd, data.c_str(), data.size());
             if (ret != (signed)data.size())
-                log(error, "could not write to tracing_on-file: ret %d, %d %s\n", (int)ret, errno, strerror(errno));
+                log(error, "event=trace_stop tracing_file=/sys/kernel/debug/tracing/tracing_on ret=%d errno=%d message=\"%s\n", (int)ret, errno, strerror(errno));
             close(fd);
         }
     }
@@ -87,21 +87,24 @@ void command::tick() {
             int status;
             pid_t ret = waitpid(running_command, &status, WNOHANG);
             if (ret != running_command) {
-                log(info, "last command still running. ignoring trigger!\n");
+                log(info, "event=execute_command messsage=\"last command still running. ignoring trigger!\"\n");
                 return;
             }
             running_command = -1;
         }
 
-        log(info, "execute command: %s\n", cmd.c_str());
+        log(info, "event=execute_command command=\"%s\"\n", cmd.c_str());
 
         pid_t ret = fork();
         if (ret == -1) {
-            log(error, "failed to execute command: fork(): %d %s\n", errno, strerror(errno));
+            log(error, "event=execute_command status=error_fork errno=%d message=\"%s\"\n", errno, strerror(errno));
             return;
         }
         if (ret == 0) {
-            system(cmd.c_str());
+            ret = system(cmd.c_str());
+            if (ret <= 0) {
+                log(warning, "event=execute_command status=failed ret=%d\n", ret);;
+            }
             exit(0);
         }
         running_command = ret;
@@ -124,8 +127,11 @@ void command::set_state_preop_2_safeop() {
 //! State transition from PREOP to SAFEOP
 void command::set_state_safeop_2_op() {
     if (exec_on_switch_to_op) {
-        log(info, "execute command: %s\n", cmd.c_str());
-        system(cmd.c_str());
+        log(info, "event=execute_command command=%s\n", cmd.c_str());
+        int ret = system(cmd.c_str());
+        if (ret <= 0) {
+            log(warning, "event=execute_command status=failed ret=%d\n", ret);;
+        }
     }
 }
 
