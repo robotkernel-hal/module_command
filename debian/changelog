@@ -1,4 +1,4 @@
-moduler-command (6.0.1) stable; urgency=low
+module-command (6.0.1) stable; urgency=low
 
   * update: new log message format
 
